@@ -1,0 +1,20 @@
+{
+  "name": "aurelia-jspm-cli",
+  "version": "0.1.0",
+  "description": "An Aurelia JSPM CLI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://mlvtito@backend.r-w-x.net/scm/git/aurelia/aurelia-jspm-cli.git"
+  },
+  "author": "Arnaud Fonce <arnaud.fonce@r-w-x.net>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "jspm": "^0.17.0-beta.41",
+    "minimist": "^1.2.0"
+  }
+}
