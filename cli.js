@@ -1,9 +1,8 @@
 //var pjson = require(process.cwd() + '/package.json');
-//var jspm = require('jspm');
 var fs = require('fs');
+var path = require('path');
+
 var argv = require('minimist')(process.argv.slice(2));
- console.dir(require.resolve('./resources/tsconfig.json'));
-//console.log(process.env);
 
 // TODO : should be extracted from package.json after jspm init
 const AURELIA_MODULE_NAMES = [
@@ -51,22 +50,34 @@ if (argv._[0] === 'init') {
         return require("./npm/npm-api").npm.install(["jspm@beta"]);
     }).then(function () {
         console.log("Installing Aurelia...");
-        require('jspm').install("aurelia-bootstrapper");
+        return require('jspm').install("aurelia-bootstrapper");
+    }).then(function () {
         return require("./npm/npm-api").npm.install(AURELIA_MODULE_NAMES);
-        // CREATE INDEX.HTML / APP.HTML / APP.TS
-        // CREATE KARMA CONF
-        // GENERATE GITIGNORE FILE
     }).then(function () {
         console.log("Installing Karma...");
         return require("./npm/npm-api").npm.install(KARMA_MODULE_NAMES);
     }).then(function () {
         console.log("Setting up site structure...");
-        copyResources("tsconfig.json");
-        copyResources("index.html");
+        var resourcePath = path.dirname(require.resolve('./resources/index.html'));
+        var destPath = process.cwd();
+        copyResources(resourcePath, destPath);
+    }).catch(function (error) {
+        console.log("Failed!", error);
     });
 }
 
-function copyResources(resourceName) {
-    fs.createReadStream(require.resolve('./resources/' + resourceName))
-                .pipe(fs.createWriteStream(process.cwd() + "/" + resourceName));
+function copyResources(resourcePath, destPath) {
+    fs.readdir(resourcePath, function (error, files) {
+        for (var file in files) {
+            var childPath = path.join(resourcePath, files[file]);
+            var childDestPath = path.join(destPath, files[file]);
+            if (fs.statSync(childPath).isDirectory()) {
+                fs.mkdirSync(childDestPath);
+                copyResources(childPath, childDestPath);
+            } else {
+                console.log("├── " + childPath);
+                fs.createReadStream(childPath).pipe(fs.createWriteStream(childDestPath));
+            }
+        }
+    });
 }

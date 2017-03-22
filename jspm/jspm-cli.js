@@ -16,6 +16,7 @@ JspmCli.prototype.init = function () {
             if (code !== 0) {
                 reject("Failure");
             } else {
+                // remove 
                 resolve("Success");
             }
         });
@@ -50,19 +51,21 @@ function isBlank(str) {
 }
 
 var JSPM_INIT_PROMPTS = {
-    "\x08\n": [/SystemJS\.config browser baseURL \(optional\):.*\//, false],
+    "\x08\x08\x08\n": [/SystemJS\.config local package format \(esm, cjs, amd\):.*esm/, false],
+    "\x08.\n": [/SystemJS\.config browser baseURL \(optional\):.*\//, false],
+    "Standard\n": [/Init mode \(Quick, Standard, Custom\) \[Quick\]:/, false],
+    "Yes\n": [/Use package\.json configFiles\.jspm:browser\? \[[A-Za-z]*\]:/, false,],
     "typescript\n": [/SystemJS\.config transpiler \(Babel, Traceur, TypeScript, None\) \[[a-z]*\]:/, false],
     "app.ts\n": [/SystemJS\.config local package main \[app.js\]:/, false],
     "\n": [/Package\.json file does not exist, create it\? \[Yes\]\:/, false,
-        /Init mode \(Quick, Standard, Custom\) \[Quick\]:/, false,
         /Local package name \(recommended, optional\):.*app/, false,
         /package\.json directories\.baseURL:.*\./, false,
         /package\.json configFiles folder \[\.\/\]:/, false,
         /Use package.json configFiles.jspm:dev\? \[No\]:/, false,
         /SystemJS.config Node local project path \[src\/\]:/, false,
-        /SystemJS.config browser local project URL to src\/ \[\/src\/\]:/, false,
+        /SystemJS.config browser local project URL to src\/ \[\/?src\/\]:/, false,
         /package\.json directories\.packages \[jspm_packages\/\]:/, false,
-        /SystemJS\.config browser URL to jspm_packages \[\/jspm_packages\/\]:/, false]
+        /SystemJS\.config browser URL to jspm_packages \[\/?jspm_packages\/\]:/, false]
 };
 
 
