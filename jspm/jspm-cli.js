@@ -13,6 +13,7 @@ JspmCli.prototype.init = function () {
         });
         initProcess.stdout.pipe(process.stdout);
         initProcess.on('exit', function (code) {
+            console.log("");
             if (code !== 0) {
                 reject("Failure");
             } else {
