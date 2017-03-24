@@ -1,8 +1,51 @@
 <template>
-    <h1>Welcome in this JSPM bootstraped Aurelia site.</h1>
-    
-    <p>The test message is : <b>${message}</b></p>
-    
-    <input type="text" value.bind="message" />
-    <button click.trigger="exclaim()">Exclaim</button>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        code {
+            display: inline-block;
+            background-color: rgb(43, 43, 43);
+            color: rgb(186, 186, 186);
+            width: 100%;
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
+            padding-left: 1em;
+        }
+        h4 {
+            padding-top: 1em;
+            padding-left: 0.5em;
+        }
+    </style>
+    <div style="float: right; width: 30%; padding-top: 10vh; padding-left: 1em; padding-right: 1em; background-color: lightgray; min-height: 90vh; ">
+        <h4>Run unit tests</h4>
+        <code>karma test</code>
+
+        <h4>Start development server</h4>
+        <code>npm run</code>
+
+        <h4>Install depedency</h4>
+        <code>jau install aurelia-boostrap</code>
+    </div>
+    <div style="background-color: aliceblue; padding-left: 10%; padding-right: 10%; min-height: 100vh; font-family: Pluto,"Helvetica Neue",Helvetica,Arial,sans-serif;">
+         <div style="width: 70%; padding-top:8em; padding-left: 1em;">
+            <span style="font-size: 2em; line-height: 2.2em;
+                  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","Helvetica","Arial",sans-serif">Aurelia JSPM CLI Welcome Site</span>
+        </div>
+        <div style="background-color: whitesmoke; border-radius: 10px; border: brown solid thin; width: 60%; padding-left: 1em; padding-top: 3vh; min-height: 27vh;">
+            <div style="float: right; width: 30%; font-size: 6em; text-align: center;">
+                ${message.length}
+            </div>
+            <p style="min-height: 6em;">Your message is : <br><br><b>${message}</b></p>
+
+            <div style="padding-top: 1em;">
+                <textarea value.bind="message" style="padding-left:0.1em; width: 60%; height: 6em;"></textarea>
+            </div>
+            <div style="height: 2.4em; padding-top: 1em; padding-bottom: 1em;">
+                <button click.trigger="exclaim()" style="height: 2.4em;">Exclaim</button>
+                <button click.trigger="lorem()" style="height: 2.4em;">Lorem Ipsum</button>
+            </div>
+        </div>
+    </div>
 </template>
