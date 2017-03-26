@@ -1,5 +1,6 @@
 "use strict";
 
+var pjson = require('../package.json');
 var fs = require('fs');
 var path = require('path');
 
@@ -30,7 +31,6 @@ const AURELIA_MODULE_NAMES = [
 ];
 
 const TOOLS_MODULE_NAMES = [
-    "jspm@beta",
     "karma",
     "karma-chai",
     "karma-jspm",
@@ -44,10 +44,18 @@ const TOOLS_MODULE_NAMES = [
 ];
 
 module.exports = function () {
-    console.log("Initializing project...");
-    require('../jspm/jspm-cli').jspmCli.init().then(function () {
+    var jspmModuleName = "jspm@" + pjson.dependencies.jspm;
+    console.log("Installing local JSPM...");
+    require("../npm/npm-api").npm.install([jspmModuleName]).then(function () {
+        console.log("Initializing project...");
+        return require('../jspm/jspm-cli').jspmCli.init()
+    }).then(function () {
         console.log("Installing Development Tools...");
-        return require("../npm/npm-api").npm.install(TOOLS_MODULE_NAMES);
+        var toolsDependencies = [jspmModuleName];
+        TOOLS_MODULE_NAMES.forEach(function(element) {
+           toolsDependencies.push(element); 
+        });
+        return require("../npm/npm-api").npm.install(toolsDependencies);
     }).then(function () {
         console.log("Installing Aurelia...");
         return require('jspm').install("aurelia-bootstrapper");
@@ -58,10 +66,10 @@ module.exports = function () {
         var resourcePath = path.dirname(require.resolve('../resources/index.html'));
         var destPath = process.cwd();
         copyResources(resourcePath, destPath);
-        for (var iResource=0 ; iResource < copiedResource.length - 1; iResource++) {
+        for (var iResource = 0; iResource < copiedResource.length - 1; iResource++) {
             console.log("├── " + path.relative(resourcePath, copiedResource[iResource]));
         }
-        console.log("└── " + path.relative(resourcePath, copiedResource[copiedResource.length-1]));
+        console.log("└── " + path.relative(resourcePath, copiedResource[copiedResource.length - 1]));
     }).catch(function (error) {
         console.log("Failed!", error);
     });
