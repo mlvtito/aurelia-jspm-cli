@@ -1,34 +1,8 @@
 "use strict";
 
-var pjson = require('../package.json');
+var jauJson = require('../package.json');
 var fs = require('fs');
 var path = require('path');
-
-// TODO : should be extracted from package.json after jspm init
-const AURELIA_MODULE_NAMES = [
-    "aurelia-binding",
-    "aurelia-dependency-injection",
-    "aurelia-event-aggregator",
-    "aurelia-framework",
-    "aurelia-history",
-    "aurelia-history-browser",
-    "aurelia-loader",
-    "aurelia-loader-default",
-    "aurelia-logging",
-    "aurelia-logging-console",
-    "aurelia-metadata",
-    "aurelia-pal",
-    "aurelia-pal-browser",
-    "aurelia-path",
-    "aurelia-polyfills",
-    "aurelia-route-recognizer",
-    "aurelia-router",
-    "aurelia-task-queue",
-    "aurelia-templating",
-    "aurelia-templating-binding",
-    "aurelia-templating-resources",
-    "aurelia-templating-router"
-];
 
 const TOOLS_MODULE_NAMES = [
     "karma",
@@ -44,23 +18,31 @@ const TOOLS_MODULE_NAMES = [
 ];
 
 module.exports = function () {
-    var jspmModuleName = "jspm@" + pjson.dependencies.jspm;
+    var jspmModuleName = "jspm@" + jauJson.dependencies.jspm;
     console.log("Installing local JSPM...");
     require("../npm/npm-api").npm.install([jspmModuleName]).then(function () {
         console.log("Initializing project...");
         return require('../jspm/jspm-cli').jspmCli.init()
     }).then(function () {
-        console.log("Installing Development Tools...");
-        var toolsDependencies = [jspmModuleName];
-        TOOLS_MODULE_NAMES.forEach(function(element) {
-           toolsDependencies.push(element); 
-        });
-        return require("../npm/npm-api").npm.install(toolsDependencies);
-    }).then(function () {
         console.log("Installing Aurelia...");
         return require('jspm').install("aurelia-bootstrapper");
     }).then(function () {
-        return require("../npm/npm-api").npm.install(AURELIA_MODULE_NAMES);
+        var aureliaDependencies = [];
+        var projectJson = require(process.cwd() + '/package.json');
+        for (var key in projectJson.jspm.dependencies) {
+            aureliaDependencies.push(projectJson.jspm.dependencies[key].substring(4));
+        }
+        for (var key in projectJson.jspm.peerDependencies) {
+            aureliaDependencies.push(projectJson.jspm.peerDependencies[key].substring(4));
+        }
+        return require("../npm/npm-api").npm.install(aureliaDependencies);
+    }).then(function () {
+        console.log("Installing Tools Dependencies...");
+        var toolsDependencies = [];
+        TOOLS_MODULE_NAMES.forEach(function (element) {
+            toolsDependencies.push(element);
+        });
+        return require("../npm/npm-api").npm.install(toolsDependencies);
     }).then(function () {
         console.log("Setting up site structure...");
         var resourcePath = path.dirname(require.resolve('../resources/index.html'));
