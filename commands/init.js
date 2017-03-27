@@ -25,26 +25,22 @@ module.exports = function () {
     console.log("Installing local JSPM...");
     npm.install([jspmModuleName]).then(function () {
         console.log("Initializing project...");
-        jspmCli.init();
+        return jspmCli.init();
     }).then(function () {
-        console.log("Installing Aurelia...");
+        console.log("Installing Dependencies...");
         return jspm.install("aurelia-bootstrapper");
     }).then(function () {
-        var aureliaDependencies = [];
-        var projectJson = require(process.cwd() + '/package.json');
-        for (var key in projectJson.jspm.dependencies) {
-            aureliaDependencies.push(projectJson.jspm.dependencies[key].substring(4));
-        }
-        for (var key in projectJson.jspm.peerDependencies) {
-            aureliaDependencies.push(projectJson.jspm.peerDependencies[key].substring(4));
-        }
-        return npm.install(aureliaDependencies);
-    }).then(function () {
-        console.log("Installing Tools Dependencies...");
         var toolsDependencies = [];
         TOOLS_MODULE_NAMES.forEach(function (element) {
             toolsDependencies.push(element);
         });
+        var projectJson = require(process.cwd() + '/package.json');
+        for (var key in projectJson.jspm.dependencies) {
+            toolsDependencies.push(projectJson.jspm.dependencies[key].substring(4));
+        }
+        for (var key in projectJson.jspm.peerDependencies) {
+            toolsDependencies.push(projectJson.jspm.peerDependencies[key].substring(4));
+        }
         return npm.install(toolsDependencies);
     }).then(function () {
         return npm.install([jspmModuleName]);
