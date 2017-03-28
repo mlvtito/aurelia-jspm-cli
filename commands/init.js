@@ -34,7 +34,7 @@ module.exports = function () {
         TOOLS_MODULE_NAMES.forEach(function (element) {
             toolsDependencies.push(element);
         });
-        var projectJson = require(process.cwd() + '/package.json');
+        var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
         for (var key in projectJson.jspm.dependencies) {
             toolsDependencies.push(projectJson.jspm.dependencies[key].substring(4));
         }
@@ -53,6 +53,14 @@ module.exports = function () {
             console.log("├── " + path.relative(resourcePath, copiedResource[iResource]));
         }
         console.log("└── " + path.relative(resourcePath, copiedResource[copiedResource.length - 1]));
+    }).then(function () {
+        console.log("Adding scripts...");
+        var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
+        if( ! projectJson.scripts ) {
+            projectJson.scripts = {};
+        }
+        projectJson.scripts["bundle-vendor"] = "auj bundle:vendors";
+        fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
     }).catch(function (error) {
         console.log("Failed!", error);
     });
