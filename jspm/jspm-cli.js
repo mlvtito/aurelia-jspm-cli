@@ -1,10 +1,14 @@
 "use strict";
 
 var JspmCli = function () {};
+var path = require("path");
+
+var jspmApiPath = require.resolve("jspm");
+var jspmCli = path.join( path.dirname(jspmApiPath), "jspm.js");
 
 JspmCli.prototype.init = function () {
     return new Promise(function (resolve, reject) {
-        var initProcess = require('child_process').spawn("jspm", ["init"]);
+        var initProcess = require('child_process').spawn(jspmCli, ["init"]);
         initProcess.stdin.setEncoding('utf-8');
         var totalOutput = "";
         initProcess.stdout.on('data', function (data) {

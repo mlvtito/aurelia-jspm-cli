@@ -22,15 +22,12 @@ const TOOLS_MODULE_NAMES = [
 
 module.exports = function () {
     var jspmModuleName = "jspm@" + jauJson.dependencies.jspm;
-    console.log("Installing local JSPM...");
-    npm.install([jspmModuleName]).then(function () {
-        console.log("Initializing project...");
-        return jspmCli.init();
-    }).then(function () {
+    console.log("Initializing project...");
+    jspmCli.init().then(function () {
         console.log("Installing Dependencies...");
         return jspm.install("aurelia-bootstrapper");
     }).then(function () {
-        var toolsDependencies = [];
+        var toolsDependencies = [jspmModuleName];
         TOOLS_MODULE_NAMES.forEach(function (element) {
             toolsDependencies.push(element);
         });
@@ -43,8 +40,6 @@ module.exports = function () {
         }
         return npm.install(toolsDependencies);
     }).then(function () {
-        return npm.install([jspmModuleName]);
-    }).then(function () {
         console.log("Setting up site structure...");
         var resourcePath = path.dirname(require.resolve('../resources/index.html'));
         var destPath = process.cwd();
@@ -56,7 +51,7 @@ module.exports = function () {
     }).then(function () {
         console.log("Adding scripts...");
         var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-        if( ! projectJson.scripts ) {
+        if (!projectJson.scripts) {
             projectJson.scripts = {};
         }
         projectJson.scripts["bundle-vendor"] = "auj bundle:vendors";
