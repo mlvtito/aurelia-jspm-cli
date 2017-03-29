@@ -5,7 +5,7 @@ var NpmApi = function () {};
 NpmApi.prototype.install = function (moduleNames) {
     return new Promise(function (resolve, reject) {
         var npm = require("npm");
-        npm.load({loaded: false, "save-dev": true, "progress": false, "loglevel": "silent", "depth": 0}, function (err) {
+        npm.load({loaded: false, "save-dev": true, "progress": true, "loglevel": "silent", "depth": 0}, function (err) {
 
             if (err) {
                 reject(err);
