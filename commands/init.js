@@ -9,6 +9,7 @@ var jspm = require('jspm');
 
 const TOOLS_MODULE_NAMES = [
     "karma",
+    "karma-cli",
     "karma-chai",
     "karma-jspm",
     "karma-mocha",
@@ -55,6 +56,7 @@ module.exports = function () {
             projectJson.scripts = {};
         }
         projectJson.scripts["bundle-vendor"] = "auj bundle:vendors";
+        projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
     }).catch(function (error) {
         console.log("Failed!", error);
