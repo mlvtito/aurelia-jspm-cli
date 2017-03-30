@@ -11,49 +11,26 @@ module.exports = function (argv) {
 
     jspm.install(argv._[1]).then(function () {
         var toolsDependencies = [];
-        var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-        for (var key in projectJson.jspm.dependencies) {
-            if (!projectJson.jspm.dependencies[key].startsWith("npm:jspm-nodelibs")) {
-                if (projectJson.jspm.dependencies[key].startsWith("npm:")) {
-                    toolsDependencies.push(projectJson.jspm.dependencies[key].substring(4));
-                }
+        require("../commons/project").project.vendorDependencies().forEach(dependency => {
+            if (dependency.registry === "npm") {
+                toolsDependencies.push(dependency.dependency);
             }
+        });
+        if( toolsDependencies.length > 0 ) {
+            return npm.install(toolsDependencies);
         }
-        for (var key in projectJson.jspm.peerDependencies) {
-            if (!projectJson.jspm.peerDependencies[key].startsWith("npm:jspm-nodelibs")) {
-                if (projectJson.jspm.peerDependencies[key].startsWith("npm:")) {
-                    toolsDependencies.push(projectJson.jspm.peerDependencies[key].substring(4));
-                }
-            }
-        }
-        return npm.install(toolsDependencies);
     }).then(function () {
         var promises = [];
-        var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-        for (var key in projectJson.jspm.dependencies) {
-            if (!projectJson.jspm.dependencies[key].startsWith("npm:jspm-nodelibs")) {
-                if (projectJson.jspm.dependencies[key].startsWith("npm:")) {
-                    var depJson = JSON.parse(fs.readFileSync(process.cwd() + '/node_modules/' + key + '/package.json', 'utf8'));
-                    if (!depJson.typings) {
-                        promises.push(npm.exists("@types/" + key));
-                    }
-                } else {
-                    promises.push(npm.exists("@types/" + key));
+        require("../commons/project").project.vendorDependencies().forEach(dependency => {
+            if (dependency.registry === "npm") {
+                var depJson = JSON.parse(fs.readFileSync(process.cwd() + '/node_modules/' + dependency.moduleName + '/package.json', 'utf8'));
+                if (!depJson.typings) {
+                    promises.push(npm.exists("@types/" + dependency.moduleName));
                 }
+            } else {
+                promises.push(npm.exists("@types/" + dependency.moduleName));
             }
-        }
-        for (var key in projectJson.jspm.peerDependencies) {
-            if (!projectJson.jspm.peerDependencies[key].startsWith("npm:jspm-nodelibs")) {
-                if (projectJson.jspm.peerDependencies[key].startsWith("npm:")) {
-                    var depJson = JSON.parse(fs.readFileSync(process.cwd() + '/node_modules/' + key + '/package.json', 'utf8'));
-                    if (!depJson.typings) {
-                        promises.push(npm.exists("@types/" + key));
-                    }
-                } else {
-                    promises.push(npm.exists("@types/" + key));
-                }
-            }
-        }
+        });
         return Promise.all(promises.map(reflect));
     }).then(function (results) {
         var success = results.filter(x => x.status === "resolved").map(x => x.v.module);
