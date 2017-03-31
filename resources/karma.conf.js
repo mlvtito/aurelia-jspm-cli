@@ -12,12 +12,14 @@ module.exports = function (config) {
             config: 'jspm.config.js',
             browser: 'jspm.browser.js',
             loadFiles: ['test/unit/*.spec.ts'],
-            serveFiles: ['src/*.ts']
+            serveFiles: ['src/*.ts', 'bundles/*.js'],
+	    useBundles: true
         },
         
         proxies: {
             '/src/': '/base/src/',
             '/test/': '/base/test/',
+            '/bundles/': '/base/bundles/',
             '/jspm_packages/': '/base/jspm_packages/'
         },
         
