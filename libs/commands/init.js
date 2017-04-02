@@ -1,6 +1,6 @@
 "use strict";
 
-var jauJson = require('../package.json');
+var jauJson = require('../../package.json');
 var fs = require('fs');
 var path = require('path');
 var npm = require("../npm/npm-api").npm;
@@ -28,21 +28,21 @@ module.exports = function () {
         console.log("Installing Dependencies...");
         return jspm.install("aurelia-bootstrapper");
     }).then(function () {
+        return jspm.install("text", "0.0.7");
+    }).then(function () {
         var toolsDependencies = [jspmModuleName];
         TOOLS_MODULE_NAMES.forEach(function (element) {
             toolsDependencies.push(element);
         });
-        var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-        for (var key in projectJson.jspm.dependencies) {
-            toolsDependencies.push(projectJson.jspm.dependencies[key].substring(4));
-        }
-        for (var key in projectJson.jspm.peerDependencies) {
-            toolsDependencies.push(projectJson.jspm.peerDependencies[key].substring(4));
-        }
+        require("../commons/project").project.vendorDependencies().forEach( v => {
+           if( v.registry === "npm" ) {
+               toolsDependencies.push(v.dependency);
+           }
+        });
         return npm.install(toolsDependencies);
     }).then(function () {
         console.log("Setting up site structure...");
-        var resourcePath = path.dirname(require.resolve('../resources/index.html'));
+        var resourcePath = path.dirname(require.resolve('../../resources/index.html'));
         var destPath = process.cwd();
         copyResources(resourcePath, destPath);
         for (var iResource = 0; iResource < copiedResource.length - 1; iResource++) {
