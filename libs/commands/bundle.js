@@ -8,5 +8,5 @@ module.exports = function (argv) {
     var modules = project.vendorDependencies().map(d => d.moduleName).reduce((a,b) => a + " + " + b);
     console.log(modules);
     var builder = new Builder();
-    builder.bundle(modules, "bundles/bundle-vendor.js", {minify:true, inject:true});
+    builder.bundle(modules, "bundles/bundle-vendor.js", {minify:true, inject:false, sourceMaps:true});
 };
