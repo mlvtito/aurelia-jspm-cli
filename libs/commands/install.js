@@ -9,14 +9,15 @@ require(process.cwd() + '/jspm.config.js');
 module.exports = function (argv) {
     console.log("Installing dependency " + argv._[1] + "...");
 
-    jspm.install(argv._[1]).then(function () {
+    var dependenciesMap = extractDependenciesMap(argv._[1]);
+    jspm.install(dependenciesMap).then(function () {
         var toolsDependencies = [];
         require("../commons/project").project.vendorDependencies().forEach(dependency => {
             if (dependency.registry === "npm") {
                 toolsDependencies.push(dependency.dependency);
             }
         });
-        if( toolsDependencies.length > 0 ) {
+        if (toolsDependencies.length > 0) {
             return npm.install(toolsDependencies);
         }
     }).then(function () {
@@ -42,6 +43,24 @@ module.exports = function (argv) {
     });
 };
 
+function extractDependenciesMap(arg) {
+    var depMap = {};
+    var name = arg.split('=')[0];
+    var target = arg.split('=')[1];
+    if (!target) {
+        target = name;
+        if (name.indexOf(':') !== -1)
+            name = name.substr(name.indexOf(':') + 1);
+        if (name.lastIndexOf('@') > 0)
+            name = name.substr(0, name.lastIndexOf('@'));
+    }
+
+    if (target.indexOf(':') === -1)
+        target = 'jspm:' + target;
+
+    depMap[name] = target || '';
+    return depMap;
+}
 
 function reflect(promise) {
     return promise.then(function (v) {
