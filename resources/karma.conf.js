@@ -10,7 +10,7 @@ module.exports = function (config) {
 
         jspm: {
             config: 'jspm.config.js',
-            browser: 'jspm.browser.js',
+            browser: 'jspm.browser.dev.js',
             loadFiles: ['test/unit/*.spec.ts'],
             serveFiles: ['src/*.ts', 'bundles/*.js'],
 	    useBundles: true
