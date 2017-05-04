@@ -18,7 +18,8 @@ const TOOLS_MODULE_NAMES = [
     "chai",
     "karma-firefox-launcher",
     "@types/chai",
-    "@types/mocha"
+    "@types/mocha",
+    "aurelia-jspm-cli"
 ];
 
 module.exports = function () {
@@ -57,6 +58,7 @@ module.exports = function () {
         }
         projectJson.scripts["bundle-vendor"] = "auj bundle:vendors";
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
+        projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
     }).catch(function (error) {
         console.log("Failed!", error);
