@@ -56,7 +56,9 @@ module.exports = function () {
         if (!projectJson.scripts) {
             projectJson.scripts = {};
         }
-        projectJson.scripts["bundle-vendor"] = "auj bundle:vendors";
+        projectJson.scripts["bundle:vendor"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --vendor";
+        projectJson.scripts["bundle:app"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app";
+        projectJson.scripts["bundle"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app --vendor";
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
         projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
