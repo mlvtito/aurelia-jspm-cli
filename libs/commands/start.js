@@ -1,9 +1,10 @@
 "use strict";
 
 //var Builder = require('jspm').Builder;
+const path = require('path');
 
 module.exports = function (argv) {
-    var bundle = require("../../node_modules/jspm/lib/bundle");
+    var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
     writeIndexFileForDev().then(function () {
         return bundle.bundle("src/**/*.ts + src/**/*.html!text", "bundles/bundle-app.js", {
@@ -14,7 +15,7 @@ module.exports = function (argv) {
             watch: true
         });
     }).then(function () {
-        var liveServer = require("../../node_modules/live-server/index");
+        var liveServer = require(path.dirname(require.resolve("live-server")) + "/index");
         liveServer.start({
             watch: [process.cwd() + "/index-dev.html", process.cwd() + "/bundles"],
             file: process.cwd(),
