@@ -3,7 +3,31 @@
 //var Builder = require('jspm').Builder;
 const path = require('path');
 
+var opts = {
+    host: process.env.IP,
+    port: process.env.PORT,
+    open: '/index-dev.html',
+    file: process.cwd(),
+    mount: [],
+    proxy: [],
+    middleware: [],
+    logLevel: 2,
+    watch: [process.cwd() + "/index-dev.html", process.cwd() + "/bundles"]
+};
+
 module.exports = function (argv) {
+    if (argv.proxy) {
+        if (typeof argv.proxy === 'object') {
+            argv.proxy.forEach(arg => {
+                var match = arg.match(/([^:]+):(.+)$/);
+                opts.proxy.push([match[1], match[2]]);
+            });
+        } else if (typeof argv.proxy === 'string') {
+            var match = argv.proxy.match(/([^:]+):(.+)$/);
+            opts.proxy.push([match[1], match[2]]);
+        }
+    }
+
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
     writeIndexFileForDev().then(function () {
@@ -16,11 +40,7 @@ module.exports = function (argv) {
         });
     }).then(function () {
         var liveServer = require(path.dirname(require.resolve("live-server")) + "/index");
-        liveServer.start({
-            watch: [process.cwd() + "/index-dev.html", process.cwd() + "/bundles"],
-            file: process.cwd(),
-            open: '/index-dev.html'
-        });
+        liveServer.start(opts);
     }).catch(function (err) {
         console.log("ERR: " + err);
     });
