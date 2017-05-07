@@ -1,6 +1,6 @@
 {
   "name": "aurelia-jspm-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An Aurelia JSPM CLI",
   "bin": {
     "auj": "./bin/auj.js"
