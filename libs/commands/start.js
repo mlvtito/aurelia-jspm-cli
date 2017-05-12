@@ -16,17 +16,7 @@ var opts = {
 };
 
 module.exports = function (argv) {
-    if (argv.proxy) {
-        if (typeof argv.proxy === 'object') {
-            argv.proxy.forEach(arg => {
-                var match = arg.match(/([^:]+):(.+)$/);
-                opts.proxy.push([match[1], match[2]]);
-            });
-        } else if (typeof argv.proxy === 'string') {
-            var match = argv.proxy.match(/([^:]+):(.+)$/);
-            opts.proxy.push([match[1], match[2]]);
-        }
-    }
+    handleProxyParameters(argv);
 
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
@@ -46,9 +36,23 @@ module.exports = function (argv) {
     });
 };
 
+function handleProxyParameters(argv) {
+    if (argv.proxy) {
+        if (typeof argv.proxy === 'object') {
+            argv.proxy.forEach(arg => {
+                var match = arg.match(/([^:]+):(.+)$/);
+                opts.proxy.push([match[1], match[2]]);
+            });
+        } else if (typeof argv.proxy === 'string') {
+            var match = argv.proxy.match(/([^:]+):(.+)$/);
+            opts.proxy.push([match[1], match[2]]);
+        }
+    }
+}
+
 function writeIndexFileForDev() {
     return new Promise(function (resolve, reject) {
-        var fs = require('fs')
+        var fs = require('fs');
         fs.readFile(process.cwd() + "/index.html", 'utf8', function (err, data) {
             if (err) {
                 reject(err);
