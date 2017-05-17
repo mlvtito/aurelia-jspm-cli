@@ -17,6 +17,7 @@ var opts = {
 
 module.exports = function (argv) {
     handleProxyParameters(argv);
+    handleMockApiParameters(argv);
 
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
@@ -35,6 +36,27 @@ module.exports = function (argv) {
         console.log("ERR: " + err);
     });
 };
+
+var mockApiPath = "/test/mockapi";
+
+function handleMockApiParameters(argv) {
+    if (argv.mockapi) {
+        opts.middleware.push(mockApiMiddleware);
+    }
+}
+
+function mockApiMiddleware(req, res, next) {
+    var previousReq = req.method + " " + req.url;
+    var mockedReq = "";
+    if (req.url.substring(0, 9) === "/mock/api") {
+        req.url = req.url.replace("/mock/api", mockApiPath + "/" + req.method);
+        req.method = 'GET';
+        mockedReq = " ==> " +  req.method + " " + req.url;
+    }
+    
+    console.log(previousReq + mockedReq);
+    next();
+}
 
 function handleProxyParameters(argv) {
     if (argv.proxy) {
