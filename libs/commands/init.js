@@ -1,6 +1,6 @@
 "use strict";
 
-var jauJson = require('../../package.json');
+var aujJson = require('../../package.json');
 var fs = require('fs');
 var path = require('path');
 var npm = require("../npm/npm-api").npm;
@@ -23,7 +23,7 @@ const TOOLS_MODULE_NAMES = [
 ];
 
 module.exports = function () {
-    var jspmModuleName = "jspm@" + jauJson.dependencies.jspm;
+    var jspmModuleName = "jspm@" + aujJson.dependencies.jspm;
     console.log("Initializing project...");
     jspmCli.init().then(function () {
         console.log("Installing Dependencies...");
