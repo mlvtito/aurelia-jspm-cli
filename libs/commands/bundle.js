@@ -16,10 +16,10 @@ module.exports = function (options) {
     }
     
     if (options.app) {
-        message = message + "App...";
+        message = message + "App";
         var modules = "src/**/*.ts + src/**/*.html!text - " + project.vendorDependencies().map(d => d.moduleName).reduce((a, b) => a + " - " + b);
         builder.bundle(modules, "bundles/bundle-app.js", {minify: true, inject: false, sourceMaps: true});
     }
     
-    console.log(message);
+    console.log(message + "...");
 };
