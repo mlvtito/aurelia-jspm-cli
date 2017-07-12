@@ -50,6 +50,7 @@ module.exports = function () {
             console.log("├── " + path.relative(resourcePath, copiedResource[iResource]));
         }
         console.log("└── " + path.relative(resourcePath, copiedResource[copiedResource.length - 1]));
+        console.log(" ");
     }).then(function () {
         console.log("Adding NPM scripts...");
         var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
@@ -64,10 +65,11 @@ module.exports = function () {
         projectJson.scripts["bundle"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app --vendor";
         console.log("├── Script to launch test");
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
-        console.log("├── Script to start development server");
+        console.log("└──  Script to start development server");
         projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
         
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
+        console.log(" ");
     }).catch(function (error) {
         console.log("Failed!", error);
     });
