@@ -2,6 +2,7 @@
 
 //var Builder = require('jspm').Builder;
 const path = require('path');
+const chokidar = require('chokidar');
 
 var opts = {
     host: process.env.IP,
@@ -21,7 +22,11 @@ module.exports = function (argv) {
 
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
-    writeIndexFileForDev().then(function () {
+    writeIndexFileForDev().then(function() {
+        chokidar.watch( "index.html", {}).on("all", (event, path) => {
+            writeIndexFileForDev();
+        });
+    }).then(function () {
         return bundle.bundle("src/**/*.ts + src/**/*.html!text", "bundles/bundle-app.js", {
             minify: true,
             inject: false,
