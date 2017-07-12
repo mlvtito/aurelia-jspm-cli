@@ -51,16 +51,22 @@ module.exports = function () {
         }
         console.log("└── " + path.relative(resourcePath, copiedResource[copiedResource.length - 1]));
     }).then(function () {
-        console.log("Adding scripts...");
+        console.log("Adding NPM scripts...");
         var projectJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
         if (!projectJson.scripts) {
             projectJson.scripts = {};
         }
+        console.log("├── Script to bundle vendor");
         projectJson.scripts["bundle:vendor"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --vendor";
+        console.log("├── Script to bundle application");
         projectJson.scripts["bundle:app"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app";
+        console.log("├── Script to bundle vendor and application");
         projectJson.scripts["bundle"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app --vendor";
+        console.log("├── Script to launch test");
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
+        console.log("├── Script to start development server");
         projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
+        
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
     }).catch(function (error) {
         console.log("Failed!", error);
