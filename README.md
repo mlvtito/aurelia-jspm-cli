@@ -2,7 +2,7 @@
 
 This is a simple command to help you bootstrap and develop your Typescript Aurelia JSPM application.
 
-## Installing the command
+## Installing
 
 ``
 npm install aurelia-jspm-cli -g
@@ -10,7 +10,7 @@ npm install aurelia-jspm-cli -g
 
 You can now use `auj` command.
 
-## Bootstrap your application
+## Bootstraping
 
 To bootstrap your project, execute : 
 
@@ -35,7 +35,7 @@ contain typings, the command will look for corresponding types project.
 
 After adding a dependency, don't forget to update vendors bundle using the command `npm run bundle:vendor`.
 
-## During your development
+## Developing
 
 ### Unit test
 
