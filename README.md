@@ -35,14 +35,16 @@ After adding a dependency, don't forget to update vendors bundle using the comma
 
 ### Unit test
 
-Karma framework with Mocha and Chai is setup to execute your unit tests. Execute `npm test`.
+[Karma](https://www.npmjs.com/package/karma) framework with [Mocha](https://www.npmjs.com/package/mocha) and 
+[Chai](https://www.npmjs.com/package/chai) is setup to execute your unit tests. Execute `npm test`.
 
 If you just have bootstrapped your project, you should see 2 completed tests and 1 failed test (just to have some colors
 on the output console).
  
 ### Auto-reload server
 
-aurelia-jspm-cli comes with an auto-reload light web server (thanks to live-server). Execute :
+aurelia-jspm-cli comes with an auto-reload light web server 
+(thanks to [live-server](https://www.npmjs.com/package/live-server)). Execute :
 ``npm start``
 
 The browser will open automatically and each time you'll change your source code, the browser will refresh your page.
