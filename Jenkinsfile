@@ -13,18 +13,29 @@ node {
    }
    withEnv(["PATH=${tool 'NodeJS_4.6.0'}/bin:${PATH}"]) {
      stage('Install Dependencies') {
-         sh "npm install"
+        sh "npm install"
+        lastPublishedVersion = sh(script: 'npm view aurelia-jspm-cli version', returnStdout: true).trim()
+        currentVersion = sh(script: 'npm version | grep aurelia-jspm-cli | cut -d "\'" -f 4', returnStdout: true).trim()
      }
    }
 }
 
-stage('Publish to NPM') {
+if( lastPublishedVersion != currentVersion ) {
+  stage('Publish to NPM') {
     timeout(time:5, unit:'DAYS') {
-       input 'Should we deliver this version ?'
+      input 'Should we deliver this version ?'
     }
     node {
-        withEnv(["PATH=${tool 'NodeJS_4.6.0'}/bin:${PATH}"]) {
-            sh "npm publish"
-        }
+      withEnv(["PATH=${tool 'NodeJS_4.6.0'}/bin:${PATH}"]) {
+        sh "npm publish"
+      }
     }
+  }
+
+  stage('Tag Version') {
+    node {
+      sh "git tag " + currentVersion
+      sh "git push --tags"
+    }
+  }
 }
