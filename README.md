@@ -5,12 +5,14 @@ This is a simple command to help you bootstrap and develop your Typescript Aurel
 ## Installing the command
 
 ``
-npm install aurelia-jspm-cli
+npm install aurelia-jspm-cli -g
 ``
 
-You can use `auj` command.
+You can now use `auj` command.
 
 ## Bootstrap your application
+
+To bootstrap your project, execute : 
 
 ``
 mkdir my-app
@@ -18,7 +20,7 @@ cd my-app
 auj init 
 ``
 
-Generate a first vendors bundle using the command `npm run bundle:vendor`.
+Then generate a first vendors bundle using the command `npm run bundle:vendor` to limit number of HTTP requests.
 
 The project is ready and you can view a sample page by launching `npm start`.
 
@@ -51,10 +53,10 @@ The browser will open automatically and each time you'll change your source code
 
 ### Mocking API
 
-You can use the the auto-reload light server and mocking API used by your front-end application. Execute :
+You can use the the auto-reload light server to mock API used by your front-end application. Execute :
 ``npm run start:mockapi``
 
-Mock server will respond to every uri which start with "/mock/api". Mock server will search for response into 
+Mock server will respond to every uri which start with "/mock/api". It will search for response into 
 `test/mockapi` directory. The first subdirectory must be the HTTP method and must contains a path identical to the 
 request uri.
 
