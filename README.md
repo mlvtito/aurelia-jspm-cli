@@ -4,9 +4,7 @@ This is a simple command to help you bootstrap and develop your Typescript Aurel
 
 ## Installing
 
-``
-npm install aurelia-jspm-cli -g
-``
+    npm install aurelia-jspm-cli -g
 
 You can now use `auj` command.
 
@@ -14,11 +12,9 @@ You can now use `auj` command.
 
 To bootstrap your project, execute : 
 
-``
-mkdir my-app
-cd my-app
-auj init 
-``
+    mkdir my-app
+    cd my-app
+    auj init 
 
 Then generate a first vendors bundle using the command `npm run bundle:vendor` to limit number of HTTP requests.
 
@@ -28,7 +24,7 @@ The project is ready and you can view a sample page by launching `npm start`.
 
 To help you maintain Typescript types with your JSPM dependencies, you can use this command to install your dependency.
 
-``auj install your-dependency``
+    auj install your-dependency
 
 This command install your dependency with JSPM and with NPM (to handle Typescript types). If the NPM dependency does not 
 contain typings, the command will look for corresponding types project.
@@ -62,9 +58,3 @@ request uri.
 
 For instance, if you need a response to the request `GET /mock/api/blog/65/comments`, you'll have to create the file 
 `test/mockapi/GET/blog/65/comments`.
-
-
-
-
-
-
