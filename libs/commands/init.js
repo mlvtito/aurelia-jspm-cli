@@ -65,6 +65,8 @@ module.exports = function () {
         projectJson.scripts["bundle"] = "./node_modules/aurelia-jspm-cli/bin/auj.js bundle --app --vendor";
         console.log("├── Script to launch test");
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
+        console.log("├── Script to start development server with mocked api");
+        projectJson.scripts["start:mockapi"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start --mockapi";
         console.log("└──  Script to start development server");
         projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
         
