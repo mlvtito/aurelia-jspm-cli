@@ -19,6 +19,7 @@ var opts = {
 module.exports = function (argv) {
     handleProxyParameters(argv);
     handleMockApiParameters(argv);
+    handleSSLParameter(argv);
 
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
@@ -74,6 +75,13 @@ function handleProxyParameters(argv) {
             var match = argv.proxy.match(/([^:]+):(.+)$/);
             opts.proxy.push([match[1], match[2]]);
         }
+    }
+}
+
+function handleSSLParameter(argv) {
+    if(argv.ssl) {
+        console.log("Generating SSL");
+        opts.https = require.resolve("live-server-https");
     }
 }
 

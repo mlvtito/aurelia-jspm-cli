@@ -17,6 +17,7 @@
     "fs": "0.0.1-security",
     "jspm": "0.17.0-beta.42",
     "live-server": "^1.2.0",
+    "live-server-https": "0.0.2",
     "minimist": "^1.2.0",
     "npm": "^4.4.4",
     "path": "^0.12.7"
