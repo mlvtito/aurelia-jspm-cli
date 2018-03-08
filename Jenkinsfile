@@ -5,13 +5,13 @@ node {
    stage('Preparation') {
        deleteDir()
       git 'ssh://ci@91.121.149.68:29418/aurelia/aurelia-jspm-cli.git'
-      nodeHome = tool 'NodeJS_4.6.0'
+      nodeHome = tool 'NodeJS_8.6.0'
       env.PATH = "${nodeHome}/bin:${env.PATH}"
       sh "npm -v"
       sh "node -v"
       sh "jspm -v"
    }
-   withEnv(["PATH=${tool 'NodeJS_4.6.0'}/bin:${PATH}"]) {
+   withEnv(["PATH=${tool 'NodeJS_8.6.0'}/bin:${PATH}"]) {
      stage('Install Dependencies') {
         sh "npm install"
         lastPublishedVersion = sh(script: 'npm view aurelia-jspm-cli version', returnStdout: true).trim()
@@ -26,7 +26,7 @@ if( lastPublishedVersion != currentVersion ) {
       input 'Should we deliver this version ?'
     }
     node {
-      withEnv(["PATH=${tool 'NodeJS_4.6.0'}/bin:${PATH}"]) {
+      withEnv(["PATH=${tool 'NodeJS_8.6.0'}/bin:${PATH}"]) {
         sh "npm publish"
       }
     }
