@@ -81,16 +81,24 @@ function handleProxyParameters(argv) {
 function handleSSLParameter(argv) {
     if (argv.ssl) {
         const myca = require('myca');
-        myca.initDefaultCenter().then(() => {
-            return myca.initCaCert({
-                days: 10950, // 30years
-                pass: 'mycapass',
-                CN: 'My Root CA', // Common Name
-                O: 'My Company', // Organization Name (eg, company)
-                C: 'CN' // Country Name (2 letter code)
-            });
-        }).then(() => {
-            console.log("CA CERT INITIALIZED");
+        myca.isCenterInited("default").then(inited => {
+            if (!inited) {
+                console.log("Creating certificates center");
+                myca.initDefaultCenter().then(() => {
+                    console.log("DEFAULT CENTER INITIALIZED")
+                    return myca.initCaCert({
+                        days: 10950, // 30years
+                        pass: 'mycapass',
+                        CN: 'My Root CA', // Common Name
+                        O: 'My Company', // Organization Name (eg, company)
+                        C: 'CN' // Country Name (2 letter code)
+                    });
+                });
+            } else {
+                console.log("Certificates center already inited");
+                return Promise.resolve("Certificates center already inited");
+            }
+        }).then(ret => {
             return myca.genCert({
                 caKeyPass: 'mycapass',
                 kind: 'server', // server cert
@@ -105,13 +113,23 @@ function handleSSLParameter(argv) {
                 emailAddress: ''
             });
         }).then((ret) => {
+            const fs = require('fs');
+            const path = require('path');
+
             console.log("");
-            console.log(ret.cert);
+            console.log(ret.privateUnsecureKeyFile);
             console.log(ret.crtFile);
-            console.log(ret.privateUnsecureKey);
-        }).catch(console.error);
-        console.log("Generating SSL");
-        opts.https = require.resolve("live-server-https");
+            opts.https = {
+                cert: fs.readFileSync(ret.crtFile),
+                key: fs.readFileSync(ret.privateUnsecureKeyFile),
+                password: 'fooo'
+            }
+        }).catch(data => {
+            console.error("ERROR");
+            console.error(data);
+        });
+//        console.log("Generating SSL");
+//        opts.https = require.resolve("live-server-https");
     }
 }
 
