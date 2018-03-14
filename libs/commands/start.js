@@ -23,8 +23,8 @@ module.exports = function (argv) {
 
     var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
-    writeIndexFileForDev().then(function() {
-        chokidar.watch( "index.html", {}).on("all", (event, path) => {
+    writeIndexFileForDev().then(function () {
+        chokidar.watch("index.html", {}).on("all", (event, path) => {
             writeIndexFileForDev();
         });
     }).then(function () {
@@ -57,9 +57,9 @@ function mockApiMiddleware(req, res, next) {
     if (req.url.substring(0, 9) === "/mock/api") {
         req.url = req.url.replace("/mock/api", mockApiPath + "/" + req.method);
         req.method = 'GET';
-        mockedReq = " ==> " +  req.method + " " + req.url;
+        mockedReq = " ==> " + req.method + " " + req.url;
     }
-    
+
     console.log(previousReq + mockedReq);
     next();
 }
@@ -79,7 +79,37 @@ function handleProxyParameters(argv) {
 }
 
 function handleSSLParameter(argv) {
-    if(argv.ssl) {
+    if (argv.ssl) {
+        const myca = require('myca');
+        myca.initDefaultCenter().then(() => {
+            return myca.initCaCert({
+                days: 10950, // 30years
+                pass: 'mycapass',
+                CN: 'My Root CA', // Common Name
+                O: 'My Company', // Organization Name (eg, company)
+                C: 'CN' // Country Name (2 letter code)
+            });
+        }).then(() => {
+            console.log("CA CERT INITIALIZED");
+            return myca.genCert({
+                caKeyPass: 'mycapass',
+                kind: 'server', // server cert
+                days: 730,
+                pass: 'fooo', // at least 4 letters
+                CN: 'localhost', // Common Name
+                OU: '', // Organizational Unit Name
+                O: '', // Organization Name
+                L: '', // Locality Name (eg, city)
+                ST: '', // State or Province Name
+                C: 'CN', // Country Name (2 letter code)
+                emailAddress: ''
+            });
+        }).then((ret) => {
+            console.log("");
+            console.log(ret.cert);
+            console.log(ret.crtFile);
+            console.log(ret.privateUnsecureKey);
+        }).catch(console.error);
         console.log("Generating SSL");
         opts.https = require.resolve("live-server-https");
     }

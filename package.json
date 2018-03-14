@@ -19,6 +19,7 @@
     "live-server": "^1.2.0",
     "live-server-https": "0.0.2",
     "minimist": "^1.2.0",
+    "myca": "^1.11.3",
     "npm": "^4.4.4",
     "path": "^0.12.7"
   }
