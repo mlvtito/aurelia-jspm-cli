@@ -17,6 +17,7 @@ var opts = {
 };
 
 module.exports = function (argv) {
+    handlePortParameter(argv);
     handleProxyParameters(argv);
     handleMockApiParameters(argv);
     handleSSLParameter(argv).then(() => {
@@ -62,6 +63,15 @@ function mockApiMiddleware(req, res, next) {
 
     console.log(previousReq + mockedReq);
     next();
+}
+
+function handlePortParameter(argv) {
+    if(argv.port) {
+        var portNumber = parseInt(argv.port, 10);
+        if (portNumber === +argv.port) {
+            opts.port = portNumber;
+        }
+    }
 }
 
 function handleProxyParameters(argv) {
