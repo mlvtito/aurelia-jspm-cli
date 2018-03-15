@@ -19,27 +19,27 @@ var opts = {
 module.exports = function (argv) {
     handleProxyParameters(argv);
     handleMockApiParameters(argv);
-    handleSSLParameter(argv);
+    handleSSLParameter(argv).then(() => {
+        var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
 
-    var bundle = require(path.dirname(require.resolve('jspm')) + "/lib/bundle");
-
-    writeIndexFileForDev().then(function () {
-        chokidar.watch("index.html", {}).on("all", (event, path) => {
-            writeIndexFileForDev();
+        writeIndexFileForDev().then(function () {
+            chokidar.watch("index.html", {}).on("all", (event, path) => {
+                writeIndexFileForDev();
+            });
+        }).then(function () {
+            return bundle.bundle("src/**/*.ts + src/**/*.html!text", "bundles/bundle-app.js", {
+                minify: true,
+                inject: false,
+                sourceMaps: true,
+                dev: true,
+                watch: true
+            });
+        }).then(function () {
+            var liveServer = require(path.dirname(require.resolve("live-server")) + "/index");
+            liveServer.start(opts);
+        }).catch(function (err) {
+            console.log("ERR: " + err);
         });
-    }).then(function () {
-        return bundle.bundle("src/**/*.ts + src/**/*.html!text", "bundles/bundle-app.js", {
-            minify: true,
-            inject: false,
-            sourceMaps: true,
-            dev: true,
-            watch: true
-        });
-    }).then(function () {
-        var liveServer = require(path.dirname(require.resolve("live-server")) + "/index");
-        liveServer.start(opts);
-    }).catch(function (err) {
-        console.log("ERR: " + err);
     });
 };
 
@@ -81,44 +81,40 @@ function handleProxyParameters(argv) {
 function handleSSLParameter(argv) {
     if (argv.ssl) {
         const myca = require('myca');
-        myca.isCenterInited("default").then(inited => {
+        return myca.isCenterInited("default").then(inited => {
             if (!inited) {
                 console.log("Creating certificates center");
-                myca.initDefaultCenter().then(() => {
-                    console.log("DEFAULT CENTER INITIALIZED")
+                return myca.initDefaultCenter().then(() => {
+                    console.log("Creating root CA");
                     return myca.initCaCert({
                         days: 10950, // 30years
                         pass: 'mycapass',
-                        CN: 'My Root CA', // Common Name
-                        O: 'My Company', // Organization Name (eg, company)
-                        C: 'CN' // Country Name (2 letter code)
+                        CN: 'Development Root CA', // Common Name
+                        O: 'Aurelia JSPM CLI', // Organization Name (eg, company)
+                        C: 'FR' // Country Name (2 letter code)
                     });
                 });
             } else {
-                console.log("Certificates center already inited");
                 return Promise.resolve("Certificates center already inited");
             }
-        }).then(ret => {
+        }).then(() => {
+            console.log("Generating SSL certificate");
             return myca.genCert({
                 caKeyPass: 'mycapass',
                 kind: 'server', // server cert
                 days: 730,
                 pass: 'fooo', // at least 4 letters
-                CN: 'localhost', // Common Name
-                OU: '', // Organizational Unit Name
-                O: '', // Organization Name
+                CN: '127.0.0.1', // Common Name
+                OU: 'Development Server Certificate', // Organizational Unit Name
+                O: 'Aurelia JSPM CLI', // Organization Name
                 L: '', // Locality Name (eg, city)
                 ST: '', // State or Province Name
-                C: 'CN', // Country Name (2 letter code)
-                emailAddress: ''
+                C: 'FR', // Country Name (2 letter code)
+                emailAddress: '',
+                ips: ["127.0.0.1"]
             });
         }).then((ret) => {
             const fs = require('fs');
-            const path = require('path');
-
-            console.log("");
-            console.log(ret.privateUnsecureKeyFile);
-            console.log(ret.crtFile);
             opts.https = {
                 cert: fs.readFileSync(ret.crtFile),
                 key: fs.readFileSync(ret.privateUnsecureKeyFile),
@@ -128,8 +124,10 @@ function handleSSLParameter(argv) {
             console.error("ERROR");
             console.error(data);
         });
-//        console.log("Generating SSL");
-//        opts.https = require.resolve("live-server-https");
+    } else {
+        return new Promise(function (resolve, reject) {
+            resolve();
+        });
     }
 }
 
