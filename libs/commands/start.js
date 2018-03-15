@@ -83,22 +83,33 @@ function handleSSLParameter(argv) {
         const myca = require('myca');
         return myca.isCenterInited("default").then(inited => {
             if (!inited) {
-                console.log("Creating certificates center");
                 return myca.initDefaultCenter().then(() => {
-                    console.log("Creating root CA");
                     return myca.initCaCert({
                         days: 10950, // 30years
                         pass: 'mycapass',
                         CN: 'Development Root CA', // Common Name
                         O: 'Aurelia JSPM CLI', // Organization Name (eg, company)
                         C: 'FR' // Country Name (2 letter code)
+                    }).then((ret) => {
+                        console.log("");
+                        console.log("A root certificate that will entrust your development cerificates has been "
+                                + "generated (add it to your browser to avoid security exception and get a green padlock)"
+                                + " : " + ret.crtFile);
+                        console.log("");
+                        return new Promise(function (resolve, reject) {
+                            resolve();
+                        });
                     });
                 });
             } else {
-                return Promise.resolve("Certificates center already inited");
+                return myca.getCenterPath("default").then((centerPath) => {
+                    const file = path.join(centerPath, "ca.crt");
+                    console.log("");
+                    console.log("Root CA certificate already exist, don't forget to add it to your browser : " + file);
+                    console.log("");
+                });
             }
         }).then(() => {
-            console.log("Generating SSL certificate");
             return myca.genCert({
                 caKeyPass: 'mycapass',
                 kind: 'server', // server cert
