@@ -66,7 +66,8 @@ For instance, if you need a response to the request `GET /mock/api/blog/65/comme
 
 ### SSL
 
-You can use the auto-reload light server to test your app with SSL/TLS. Simply add ``-- --ssl`` to the command used to 
+You can use the auto-reload light server to test your app with SSL/TLS (thanks to 
+[myca](https://www.npmjs.com/package/myca)). Simply add ``-- --ssl`` to the command used to 
 start your server. For instance :
 
     npm run start -- --ssl
