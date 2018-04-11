@@ -45,14 +45,17 @@ on the output console).
 
 aurelia-jspm-cli comes with an auto-reload light web server 
 (thanks to [live-server](https://www.npmjs.com/package/live-server)). Execute :
-``npm start``
+
+    npm run start
 
 The browser will open automatically and each time you'll change your source code, the browser will refresh your page.
 
 ### Mocking API
 
 You can use the the auto-reload light server to mock API used by your front-end application. Execute :
-``npm run start:mockapi``
+
+    npm run start:mockapi
+
 
 Mock server will respond to every uri which start with "/mock/api". It will search for response into 
 `test/mockapi` directory. The first subdirectory must be the HTTP method and must contains a path identical to the 
@@ -60,3 +63,17 @@ request uri.
 
 For instance, if you need a response to the request `GET /mock/api/blog/65/comments`, you'll have to create the file 
 `test/mockapi/GET/blog/65/comments`.
+
+### SSL
+
+You can use the auto-reload light server to test your app with SSL/TLS. Simply add ``-- --ssl`` to the command used to 
+start your server. For instance :
+
+    npm run start -- --ssl
+    npm run start:mockapi -- --ssl
+
+Watch the command output, it will indicate the CA certificate to import into your browser if you need a green browser 
+padlock (to check mixed content for instance).
+
+The CA certificate will signed the server certificate with every hostname found in the system "hosts" file wich match
+the IP 127.0.0.1. It means that the browser padlock will stay green for every local hostname.
