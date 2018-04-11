@@ -120,6 +120,8 @@ function handleSSLParameter(argv) {
                 });
             }
         }).then(() => {
+            var parseHosts = require('parse-hosts');
+            var hostnames = parseHosts.get()['127.0.0.1'];
             return myca.genCert({
                 caKeyPass: 'mycapass',
                 kind: 'server', // server cert
@@ -132,7 +134,9 @@ function handleSSLParameter(argv) {
                 ST: '', // State or Province Name
                 C: 'FR', // Country Name (2 letter code)
                 emailAddress: '',
-                ips: ["127.0.0.1"]
+                // I Can not add ips and SAN in the same certificate, I'll try to push a correction into myca
+//                ips: ["127.0.0.1"],
+                SAN: hostnames
             });
         }).then((ret) => {
             const fs = require('fs');
