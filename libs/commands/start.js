@@ -66,7 +66,7 @@ function mockApiMiddleware(req, res, next) {
 }
 
 function handlePortParameter(argv) {
-    if(argv.port) {
+    if (argv.port) {
         var portNumber = parseInt(argv.port, 10);
         if (portNumber === +argv.port) {
             opts.port = portNumber;
@@ -120,12 +120,35 @@ function handleSSLParameter(argv) {
                 });
             }
         }).then(() => {
+            return myca.getCenterPath("default");
+        }).then((centerPath) => {
+            const file = path.join(centerPath, "auj.db");
+            const fs = require('fs');
+            var os = require("os");
+
             var parseHosts = require('parse-hosts');
             var hostnames = parseHosts.get()['127.0.0.1'];
+            hostnames.sort();
+
+            const lines = fs.readFileSync(file, "utf8").split(os.EOL);
+            for (var idx in lines) {
+                var fields = lines[idx].split(";");
+                if (fields[0] === hostnames.join(",")) {
+                    console.log("Reusing server certificate " + fields[1] + os.EOL);
+                    return new Promise(function (resolve, reject) {
+                        var data = {};
+                        data.crtFile = fields[1];
+                        data.privateUnsecureKeyFile = fields[2];
+                        resolve(data);
+                    });
+                }
+            }
+
+            console.log("Generating new server certificate" + os.EOL);
             return myca.genCert({
                 caKeyPass: 'mycapass',
                 kind: 'server', // server cert
-                days: 730,
+                days: 10950,
                 pass: 'fooo', // at least 4 letters
                 CN: '127.0.0.1', // Common Name
                 OU: 'Development Server Certificate', // Organizational Unit Name
@@ -140,11 +163,22 @@ function handleSSLParameter(argv) {
             });
         }).then((ret) => {
             const fs = require('fs');
+            myca.getCenterPath("default").then((centerPath) => {
+                const file = path.join(centerPath, "auj.db");
+                var os = require("os");
+                var parseHosts = require('parse-hosts');
+                var hostnames = parseHosts.get()['127.0.0.1'];
+                hostnames.sort();
+                fs.appendFileSync(file, hostnames.join(",") + ";"
+                        + ret.crtFile + ";"
+                        + ret.privateUnsecureKeyFile + os.EOL);
+            });
             opts.https = {
                 cert: fs.readFileSync(ret.crtFile),
                 key: fs.readFileSync(ret.privateUnsecureKeyFile),
                 password: 'fooo'
             }
+
         }).catch(data => {
             console.error("ERROR");
             console.error(data);
