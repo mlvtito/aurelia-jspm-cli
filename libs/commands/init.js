@@ -67,7 +67,7 @@ module.exports = function () {
         projectJson.scripts["test"] = "./node_modules/karma-cli/bin/karma start";
         console.log("├── Script to start development server with mocked api");
         projectJson.scripts["start:mockapi"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start --mockapi";
-        console.log("└──  Script to start development server");
+        console.log("└── Script to start development server");
         projectJson.scripts["start"] = "./node_modules/aurelia-jspm-cli/bin/auj.js start";
         
         fs.writeFileSync(process.cwd() + '/package.json', JSON.stringify(projectJson, null, '  '));
